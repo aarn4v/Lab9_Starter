@@ -7,6 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lab 9</title>
 
+  <!-- TrackJS Error Monitoring - Install as first script -->
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({
+      token: "fbcfdec1d97c42b08a2dc0a8bd63e2df"
+    });
+  </script>
+
   <style>
     button {
       margin: 3px;
@@ -45,6 +53,53 @@
     #error-btns>* {
       padding: 8px 2px;
       width: 122px;
+    }
+
+    section {
+      margin-top: 30px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    section h2 {
+      margin-top: 0;
+    }
+
+    .control-group {
+      margin-bottom: 10px;
+    }
+
+    .control-group label {
+      display: inline-block;
+      width: 100px;
+    }
+
+    .control-group input {
+      width: 150px;
+      padding: 5px;
+    }
+
+    .result-box {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-left: 4px solid #007bff;
+      display: none;
+    }
+
+    .result-box.show {
+      display: block;
+    }
+
+    .error {
+      border-left-color: #dc3545;
+      background-color: #ffe6e6;
+    }
+
+    .success {
+      border-left-color: #28a745;
+      background-color: #e6ffe6;
     }
   </style>
 </head>
@@ -85,6 +140,68 @@
       <button>Console Trace</button>
       <button>Trigger a Global Error</button>
     </section>
+
+    <section id="try-catch-section">
+      <h2>Step 3: Try/Catch/Finally Examples</h2>
+
+      <h3>Example 1: Safe Division with Try/Catch</h3>
+      <div class="control-group">
+        <label for="dividend">Dividend:</label>
+        <input type="number" id="dividend" value="10">
+      </div>
+      <div class="control-group">
+        <label for="divisor">Divisor:</label>
+        <input type="number" id="divisor" value="0">
+      </div>
+      <button id="safe-divide-btn">Perform Safe Division</button>
+      <div id="divide-result" class="result-box"></div>
+
+      <h3>Example 2: Try/Catch/Finally with File Processing Simulation</h3>
+      <div class="control-group">
+        <label for="json-input">JSON Data:</label>
+        <input type="text" id="json-input" value='{"name": "Alice", "age": 25}'>
+      </div>
+      <button id="parse-json-btn">Parse JSON with Finally</button>
+      <div id="parse-result" class="result-box"></div>
+    </section>
+
+    <section id="custom-error-section">
+      <h2>Step 4: Custom Errors</h2>
+
+      <h3>Example 1: Validate Student Data</h3>
+      <div class="control-group">
+        <label for="student-name">Student Name:</label>
+        <input type="text" id="student-name" placeholder="Enter name">
+      </div>
+      <div class="control-group">
+        <label for="student-score">Score (0-100):</label>
+        <input type="number" id="student-score" placeholder="Enter score">
+      </div>
+      <button id="validate-student-btn">Validate Student</button>
+      <div id="validate-result" class="result-box"></div>
+
+      <h3>Example 2: Throw and Catch Custom Error</h3>
+      <div class="control-group">
+        <label for="age-input">Age:</label>
+        <input type="number" id="age-input" placeholder="Enter age">
+      </div>
+      <button id="check-age-btn">Check Age (Must be 18+)</button>
+      <div id="age-result" class="result-box"></div>
+    </section>
+
+    <section id="global-error-section">
+      <h2>Step 5: Global Error Handler & Third-Party Tracking</h2>
+
+      <h3>Example 1: Global Error Handler with window.onerror</h3>
+      <p>The "Trigger a Global Error" button above will throw an error that is caught by the global error handler below.</p>
+      <button id="trigger-global-error-btn">Trigger Global Error</button>
+      <div id="global-error-result" class="result-box"></div>
+
+      <h3>Example 2: Error Tracking Service (TrackJS)</h3>
+      <p>All errors are being tracked by TrackJS. Check the browser console for details.</p>
+      <button id="trigger-tracked-error-btn">Trigger Tracked Error</button>
+      <div id="tracked-error-result" class="result-box"></div>
+    </section>
   </main>
 
   <script>
@@ -100,8 +217,372 @@
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+    // Sample data for demonstrations
+    const sampleObject = {
+      name: "JavaScript Lab",
+      week: 9,
+      topics: ["console methods", "error handling", "debugging"],
+      isLab: true
+    };
+
+    const sampleArray = [
+      { id: 1, name: "Alice", score: 95 },
+      { id: 2, name: "Bob", score: 87 },
+      { id: 3, name: "Charlie", score: 92 }
+    ];
+
+    // Button event listeners
+    errorBtns[0].addEventListener('click', () => {
+      console.log("This is a basic log message");
+      console.log("Sample object:", sampleObject);
+      console.log("Sample array:", sampleArray);
+    });
+
+    errorBtns[1].addEventListener('click', () => {
+      console.error("This is an error message");
+      console.error("Error details:", new Error("Example error"));
+    });
+
+    errorBtns[2].addEventListener('click', () => {
+      console.count("button-click");
+      console.count("button-click");
+      console.count("button-click");
+    });
+
+    errorBtns[3].addEventListener('click', () => {
+      console.warn("This is a warning message");
+      console.warn("Warning: Be careful with this data", sampleObject);
+    });
+
+    errorBtns[4].addEventListener('click', () => {
+      const value = 42;
+      console.assert(value > 0, "Value should be positive");
+      console.assert(value < 0, "This assertion will fail - value is not negative");
+    });
+
+    errorBtns[5].addEventListener('click', () => {
+      console.log("Before clear");
+      console.clear();
+    });
+
+    errorBtns[6].addEventListener('click', () => {
+      console.log("Using console.dir to inspect an object:");
+      console.dir(sampleObject);
+    });
+
+    errorBtns[7].addEventListener('click', () => {
+      console.log("Using console.dirxml to inspect the main element:");
+      console.dirxml(document.querySelector('main'));
+    });
+
+    errorBtns[8].addEventListener('click', () => {
+      console.group("Student Information");
+      console.log("Total students: 3");
+      console.log("Average score: 91.3");
+      console.groupCollapsed("Detailed Scores");
+      sampleArray.forEach(student => {
+        console.log(`${student.name}: ${student.score}`);
+      });
+      console.groupEnd();
+      console.groupEnd();
+    });
+
+    errorBtns[9].addEventListener('click', () => {
+      console.log("Group end was triggered");
+    });
+
+    errorBtns[10].addEventListener('click', () => {
+      console.table(sampleArray);
+    });
+
+    errorBtns[11].addEventListener('click', () => {
+      console.time("myTimer");
+      console.log("Timer started");
+    });
+
+    errorBtns[12].addEventListener('click', () => {
+      console.timeEnd("myTimer");
+      console.log("Timer ended");
+    });
+
+    errorBtns[13].addEventListener('click', () => {
+      console.trace("Trace point reached");
+    });
+
+    // Store global errors for display
+    let globalErrors = [];
+
+    // ===== STEP 5: Global Error Handler =====
+
+    // Set up global error handler
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.group("Global Error Caught");
+      console.error("Message:", message);
+      console.error("Source:", source);
+      console.error("Line:", lineno);
+      console.error("Column:", colno);
+      console.error("Error Object:", error);
+      console.groupEnd();
+
+      // Store the error
+      const errorInfo = {
+        message: message,
+        source: source,
+        line: lineno,
+        column: colno,
+        timestamp: new Date().toLocaleTimeString(),
+        type: error ? error.name : "Unknown"
+      };
+      globalErrors.push(errorInfo);
+
+      // Display the error
+      const resultBox = document.getElementById('global-error-result');
+      resultBox.className = 'result-box show error';
+      resultBox.innerHTML = `
+        <strong>Global Error Caught:</strong><br>
+        Message: ${message}<br>
+        Type: ${errorInfo.type}<br>
+        Line: ${lineno}, Column: ${colno}<br>
+        Time: ${errorInfo.timestamp}
+      `;
+
+      // Return true to prevent the default error handling
+      return true;
+    };
+
+    // Update the "Trigger a Global Error" button to throw an actual error
+    errorBtns[14].addEventListener('click', () => {
+      console.log("About to trigger a global error...");
+      // This will be caught by window.onerror
+      throw new Error("This is a manually triggered global error from the button");
+    });
+
+    // ===== STEP 3: Try/Catch/Finally =====
+
+    // Example 1: Safe Division
+    document.getElementById('safe-divide-btn').addEventListener('click', () => {
+      const resultBox = document.getElementById('divide-result');
+      resultBox.classList.remove('show', 'error', 'success');
+
+      const dividend = parseFloat(document.getElementById('dividend').value);
+      const divisor = parseFloat(document.getElementById('divisor').value);
+
+      try {
+        console.log(`Attempting division: ${dividend} / ${divisor}`);
+
+        if (isNaN(dividend) || isNaN(divisor)) {
+          throw new Error("Invalid input: Please enter valid numbers");
+        }
+
+        if (divisor === 0) {
+          throw new Error("Division by zero is not allowed");
+        }
+
+        const result = dividend / divisor;
+        resultBox.className = 'result-box show success';
+        resultBox.innerHTML = `<strong>Success:</strong> ${dividend} ÷ ${divisor} = ${result}`;
+      } catch (error) {
+        console.error("Caught error:", error.message);
+        resultBox.className = 'result-box show error';
+        resultBox.innerHTML = `<strong>Error:</strong> ${error.message}`;
+      } finally {
+        console.log("Division attempt completed (finally block executed)");
+        console.table({ dividend, divisor, timestamp: new Date().toLocaleTimeString() });
+      }
+    });
+
+    // Example 2: Try/Catch/Finally with JSON Parsing
+    document.getElementById('parse-json-btn').addEventListener('click', () => {
+      const resultBox = document.getElementById('parse-result');
+      resultBox.classList.remove('show', 'error', 'success');
+
+      const jsonInput = document.getElementById('json-input').value;
+      let parsedData = null;
+
+      try {
+        console.log("Starting JSON parse operation...");
+        console.log("Input:", jsonInput);
+
+        parsedData = JSON.parse(jsonInput);
+
+        resultBox.className = 'result-box show success';
+        resultBox.innerHTML = `<strong>Parsed Successfully:</strong><br><pre>${JSON.stringify(parsedData, null, 2)}</pre>`;
+      } catch (error) {
+        console.error("JSON Parse Error:", error.message);
+        resultBox.className = 'result-box show error';
+        resultBox.innerHTML = `<strong>Parse Error:</strong> ${error.message}<br>Invalid JSON format`;
+      } finally {
+        console.log("JSON parsing operation completed");
+        console.log("Final parsed value:", parsedData);
+        console.timeEnd("parse-operation");
+      }
+    });
+
+    // ===== STEP 4: Custom Errors =====
+
+    // Custom Error Classes
+    class ValidationError extends Error {
+      constructor(message, field) {
+        super(message);
+        this.name = "ValidationError";
+        this.field = field;
+        this.timestamp = new Date();
+      }
+    }
+
+    class AgeRestrictionError extends Error {
+      constructor(age, minAge) {
+        super(`Must be at least ${minAge} years old. You are ${age}.`);
+        this.name = "AgeRestrictionError";
+        this.age = age;
+        this.minAge = minAge;
+      }
+    }
+
+    // Example 1: Student Validation with Custom Error
+    document.getElementById('validate-student-btn').addEventListener('click', () => {
+      const resultBox = document.getElementById('validate-result');
+      resultBox.classList.remove('show', 'error', 'success');
+
+      const name = document.getElementById('student-name').value.trim();
+      const score = parseFloat(document.getElementById('student-score').value);
+
+      try {
+        console.group("Student Validation");
+        console.log("Validating student data...", { name, score });
+
+        if (!name || name.length === 0) {
+          throw new ValidationError("Student name cannot be empty", "name");
+        }
+
+        if (name.length < 2) {
+          throw new ValidationError("Student name must be at least 2 characters", "name");
+        }
+
+        if (isNaN(score)) {
+          throw new ValidationError("Score must be a valid number", "score");
+        }
+
+        if (score < 0 || score > 100) {
+          throw new ValidationError("Score must be between 0 and 100", "score");
+        }
+
+        console.log("✓ All validations passed");
+        resultBox.className = 'result-box show success';
+        resultBox.innerHTML = `<strong>Valid Student:</strong><br>Name: ${name}<br>Score: ${score}`;
+      } catch (error) {
+        console.error("Validation failed:", error.name, error.message);
+        if (error instanceof ValidationError) {
+          console.error(`Field with error: ${error.field}`);
+        }
+        resultBox.className = 'result-box show error';
+        resultBox.innerHTML = `<strong>${error.name}:</strong> ${error.message}`;
+      } finally {
+        console.groupEnd();
+      }
+    });
+
+    // Example 2: Age Restriction with Custom Error
+    document.getElementById('check-age-btn').addEventListener('click', () => {
+      const resultBox = document.getElementById('age-result');
+      resultBox.classList.remove('show', 'error', 'success');
+
+      const age = parseInt(document.getElementById('age-input').value);
+      const MIN_AGE = 18;
+
+      try {
+        console.log("Checking age requirement...");
+
+        if (isNaN(age)) {
+          throw new Error("Please enter a valid age");
+        }
+
+        if (age < MIN_AGE) {
+          throw new AgeRestrictionError(age, MIN_AGE);
+        }
+
+        console.log(`✓ Age check passed. User is ${age} years old`);
+        resultBox.className = 'result-box show success';
+        resultBox.innerHTML = `<strong>Age Verified:</strong> You are ${age} years old and meet the requirement (18+)`;
+      } catch (error) {
+        console.error("Age check failed:", error.name, error.message);
+
+        if (error instanceof AgeRestrictionError) {
+          console.warn(`Age restriction triggered. Required: ${error.minAge}, Got: ${error.age}`);
+        }
+
+        resultBox.className = 'result-box show error';
+        resultBox.innerHTML = `<strong>${error.name}:</strong> ${error.message}`;
+      }
+    });
+
+    // Store global errors for display
+    let globalErrors = [];
+
+    // ===== STEP 5: Global Error Handler =====
+
+    // Set up global error handler
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.group("Global Error Caught");
+      console.error("Message:", message);
+      console.error("Source:", source);
+      console.error("Line:", lineno);
+      console.error("Column:", colno);
+      console.error("Error Object:", error);
+      console.groupEnd();
+
+      // Store the error
+      const errorInfo = {
+        message: message,
+        source: source,
+        line: lineno,
+        column: colno,
+        timestamp: new Date().toLocaleTimeString(),
+        type: error ? error.name : "Unknown"
+      };
+      globalErrors.push(errorInfo);
+
+      // Display the error
+      const resultBox = document.getElementById('global-error-result');
+      resultBox.className = 'result-box show error';
+      resultBox.innerHTML = `
+        <strong>Global Error Caught:</strong><br>
+        Message: ${message}<br>
+        Type: ${errorInfo.type}<br>
+        Line: ${lineno}, Column: ${colno}<br>
+        Time: ${errorInfo.timestamp}
+      `;
+
+      // Return true to prevent the default error handling
+      return true;
+    };
+
+    // Update the "Trigger a Global Error" button to throw an actual error
+    errorBtns[14].addEventListener('click', () => {
+      console.log("About to trigger a global error...");
+      // This will be caught by window.onerror
+      throw new Error("This is a manually triggered global error from the button");
+    });
+
+    // Handler for tracked error button
+    document.getElementById('trigger-tracked-error-btn').addEventListener('click', () => {
+      const resultBox = document.getElementById('tracked-error-result');
+      resultBox.className = 'result-box show error';
+
+      try {
+        // Simulate an error that would be tracked
+        const data = { name: "Test" };
+        const value = data.nonexistent.property.nested;
+      } catch (error) {
+        console.error("Tracked Error:", error);
+        resultBox.innerHTML = `
+          <strong>Error Tracked:</strong><br>
+          Message: ${error.message}<br>
+          Type: ${error.name}<br>
+          This error has been sent to TrackJS for monitoring.
+        `;
+      }
+    });
   </script>
 </body>
 
