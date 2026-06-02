@@ -510,51 +510,6 @@
       }
     });
 
-    // ===== STEP 5: Global Error Handler =====
-
-    // Set up global error handler
-    window.onerror = function(message, source, lineno, colno, error) {
-      console.group("Global Error Caught");
-      console.error("Message:", message);
-      console.error("Source:", source);
-      console.error("Line:", lineno);
-      console.error("Column:", colno);
-      console.error("Error Object:", error);
-      console.groupEnd();
-
-      // Store the error
-      const errorInfo = {
-        message: message,
-        source: source,
-        line: lineno,
-        column: colno,
-        timestamp: new Date().toLocaleTimeString(),
-        type: error ? error.name : "Unknown"
-      };
-      globalErrors.push(errorInfo);
-
-      // Display the error
-      const resultBox = document.getElementById('global-error-result');
-      resultBox.className = 'result-box show error';
-      resultBox.innerHTML = `
-        <strong>Global Error Caught:</strong><br>
-        Message: ${message}<br>
-        Type: ${errorInfo.type}<br>
-        Line: ${lineno}, Column: ${colno}<br>
-        Time: ${errorInfo.timestamp}
-      `;
-
-      // Return true to prevent the default error handling
-      return true;
-    };
-
-    // Update the "Trigger a Global Error" button to throw an actual error
-    errorBtns[14].addEventListener('click', () => {
-      console.log("About to trigger a global error...");
-      // This will be caught by window.onerror
-      throw new Error("This is a manually triggered global error from the button");
-    });
-
     // Handler for tracked error button
     document.getElementById('trigger-tracked-error-btn').addEventListener('click', () => {
       const resultBox = document.getElementById('tracked-error-result');
